@@ -3,6 +3,7 @@ import numpy as np
 import networkx as nx
 import json
 
+
 def load_data(edge_path, community_path):
     """
     load graph data, including edges and communities.
@@ -31,7 +32,7 @@ def load_data(edge_path, community_path):
         nx.set_edge_attributes(graph,
                                dict(zip(
                                    list(zip(edge_df.iloc[:, 0], edge_df.iloc[:, 1])),
-                                   np.random.random(len(edge_df)))),
+                                   np.ones(len(edge_df)))),
                                name="weight")
     if community_path[-4:] == 'json':
         community_dict = json.load(open(community_path, "r"))
@@ -39,6 +40,7 @@ def load_data(edge_path, community_path):
         community_dict = generate_community_dict(graph, communities_path=community_path, save=True)
     nx.set_node_attributes(graph, community_dict, name="community")
     return graph, community_dict
+
 
 def generate_community_dict(graph, communities_path=None, save=True):
     """
@@ -61,6 +63,7 @@ def generate_community_dict(graph, communities_path=None, save=True):
     if save:
         json.dump(community_dict, open("input/community.json", "w"))
     return community_dict
+
 
 def load_communities(communities_path):
     """
