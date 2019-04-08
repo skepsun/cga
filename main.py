@@ -19,7 +19,7 @@ def arg_parser():
                         help="The prefix used to generate edge file list.")
     parser.add_argument("--communities_path", type=str, default="input/levels",
                         help="The path of community file, only used if the list of communities exists.")
-    parser.add_argument("--head_tail", type=list, default=[1,9],
+    parser.add_argument("--head_tail", nargs="+", type=int, default=[1,9],
                         help="The head and tail of names in edge file list.")
     parser.add_argument("--output_path", type=str, default="output/topK.txt",
                         help="The path of result.")

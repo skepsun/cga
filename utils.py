@@ -14,15 +14,15 @@ def load_data(edge_path, community_path):
     if isinstance(edge_path, list):
         edge_list = []
         for path in edge_path:
-            edge_df_ = pd.read_csv(path, delimiter=" ")
+            edge_df_ = pd.read_csv(path, delimiter=" |,")
             edge_list.append(edge_df_.values)
         edge_list = np.vstack(edge_list)
         edge_df = pd.DataFrame(data=edge_list)
     else:
-        edge_df = pd.read_csv(edge_path, delimiter=" ")
+        edge_df = pd.read_csv(edge_path, delimiter=" |,")
     graph = nx.DiGraph()
     graph.add_edges_from(edge_df.iloc[:,:2].values)
-    if edge_df.shape[1] == 3:
+    if edge_df.shape[1] == 3 and isinstance(edge_df.iloc[0, 2], float):
         nx.set_edge_attributes(graph,
                                dict(zip(
                                    list(zip(edge_df.iloc[:, 0], edge_df.iloc[:, 1])),
