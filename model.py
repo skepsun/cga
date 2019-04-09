@@ -113,7 +113,7 @@ class CommunityBasedGreedyAlgorithm:
         # pool = mp.Pool()
         for k in tqdm(range(1,self.K+1)):
             for m in tqdm(range(1,self.M+1)):
-                nodes = self.communities[m - 1]
+                nodes = [node for node in self.communities[m - 1] if not node in self.I[0]]
                 # print(nodes)
                 R = self.compute_influence_degree(self.I[0], m-1)
 
@@ -124,7 +124,7 @@ class CommunityBasedGreedyAlgorithm:
                 #                         [self.I[0] + [x] for x in nodes])
                 # delta_R_list = [a.get() for a in delta_R_list]
                 delta_R = np.max(delta_R_list) - R
-                self.R[m, k] = max(self.R[m-1,k], self.R[self.M,k-1] + delta_R)
+                self.R[m, k] = max(self.R[m-1, k], self.R[self.M, k-1] + delta_R)
                 if self.R[m-1, k] >= self.R[self.M, k-1] + delta_R:
                     self.s[m, k] = self.s[m-1, k]
                 else:
@@ -132,16 +132,18 @@ class CommunityBasedGreedyAlgorithm:
 
             j = int(self.s[self.M, k])
             R1 = self.compute_influence_degree(self.I[j], j-1)
+            nodes_ = [node for node in self.communities[j-1] if not node in self.I[0]]
             delta_R_list1 = list(map(lambda x: self.compute_influence_degree(self.I[j] + [x], j-1),
-                             self.communities[j-1]))
+                             nodes_))
             # delta_R_list1 = [a.get() for a in delta_R_list1]
-            v_max = self.communities[j-1][np.argmax(delta_R_list1)]
+            v_max = nodes_[np.argmax(delta_R_list1)]
             self.I[j].append(v_max)
             self.I[0].append(v_max)
             # Unsure whether the v_max could have appeared in self.I[j] or self.I[0]
         # pool.close()
         # pool.join()
-        print("Done, cost", time.time() - t0, "s.")
+        print("\nDone, cost", time.time() - t0, "s.")
+        print("Final influence degree:", self.R[-1,-1])
 
 
 # A test of model
